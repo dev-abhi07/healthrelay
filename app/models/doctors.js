@@ -48,10 +48,23 @@ const doctors = sequelize.define('doctor', {
         defaultValue: true
     },
     specialization: {
-        type: Sequelize.ARRAY(Sequelize.UUID),
+        type: DataTypes.ARRAY(DataTypes.UUID),
         allowNull: true
     },
+    fees:{
+        type:DataTypes.FLOAT,
+        allowNull:true,
+    },
+    departmentId:{
+        type:DataTypes.ARRAY(DataTypes.UUID),
+        allowNull: true
+    },
+    diseaseId:{
+        type:DataTypes.ARRAY(DataTypes.UUID),
+        allowNull: true
+    }
 })
+
 
 // doctors.sync({})
 //     .then(() => {

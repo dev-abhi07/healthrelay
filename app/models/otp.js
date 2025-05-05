@@ -49,13 +49,14 @@ const otp = sequelize.define('otp', {
             }
         }
     },
+  
     status: {
         type: DataTypes.ENUM('pending', 'verified'),
         defaultValue: 'pending'
     }
 
 })
-// otp.sync()
+// otp.sync({ alter: true })
 //     .then(() => {
 //         console.log('OTP table created successfully');
 //     })

@@ -16,7 +16,7 @@ exports.login = async (req, res) => {
                 { id: query.id, role: query.role },
                 process.env.SECRET_KEY,
                 {
-                    expiresIn: "7d",
+                    expiresIn: "8h",
                 }
             );
             const userInfo = await users.findByPk(query.id);
@@ -46,6 +46,43 @@ exports.login = async (req, res) => {
             "success",
             "Server Error",
             {error},
+            res,
+            200
+        );
+    }
+}
+
+exports.logout = async (req, res) => {
+    try {
+       
+        const user = await users.findOne({
+            where: {id:req.users.id} },
+        )
+        if (user) {
+            user.token = null;
+            user.deviceToken = null
+            await user.save();
+            return Helper.response(
+                true,
+                "You have logged out successfully!",
+                {},
+                res,
+                200
+            );
+        } else {
+            return Helper.response(
+                false,
+                "Token not found",
+                {},
+                res,
+                200
+            );
+        }
+    } catch (error) {
+        return Helper.response(
+            false,
+            "Server Error",
+            {},
             res,
             200
         );

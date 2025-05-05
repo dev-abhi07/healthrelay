@@ -1,24 +1,26 @@
+
+
 const { DataTypes } = require("sequelize");
 const sequelize = require("../connection/sequelize");
 
-const specialization = sequelize.define('specialization',{
+const Department = sequelize.define('department',{
     id:{
         type:DataTypes.UUID,
         allowNull:false,
         primaryKey:true,
         defaultValue: DataTypes.UUIDV4,
     },
-    specialization:{
+    name:{
         type:DataTypes.STRING(255),
         allowNull:false,
     },
 })
 
-// specialization.sync({})
+// Department.sync({})
 //     .then(() => {
-//         console.log('specialization table created successfully');
+//         console.log('department table created successfully');
 //     })
 //     .catch((error) => {
-//         console.error('Error creating specialization table:', error);
+//         console.error('Error creating department table:', error);
 //     });
-module.exports = specialization
+module.exports = Department

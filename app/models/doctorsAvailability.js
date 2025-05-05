@@ -13,7 +13,7 @@ const doctorsAvailability = sequelize.define('doctorsAvailability', {
         allowNull: false,
     },
     dayOfWeek: {
-        type: DataTypes.INTEGER, // 0 = Sunday, 6 = Saturday
+        type: DataTypes.INTEGER, 
         allowNull: false
     },
     startTime: {
@@ -28,10 +28,16 @@ const doctorsAvailability = sequelize.define('doctorsAvailability', {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0
-    }
+    },
+    slotDuration: {
+        type: DataTypes.INTEGER,
+        allowNull:true,
+      
+      }
+      
 })
 
-// doctorsAvailability.sync({})
+// doctorsAvailability.sync({alter:true})
 //     .then(() => {
 //         console.log('doctorsAvailability table created successfully');
 //     })

@@ -1,6 +1,7 @@
 const sequelize = require("../../connection/sequelize");
 const Helper = require("../../helper/helper");
 const doctors = require("../../models/doctors");
+const Map = require("../../models/map");
 const users = require("../../models/users");
 
 exports.dashboard = async (req, res) => {
@@ -40,5 +41,16 @@ exports.dashboard = async (req, res) => {
             res,
             200
         );
+    }
+}
+
+
+exports.mapDetails = async(req,res)=>{
+    try{
+        const data = await Map.findAll()
+        return Helper.response(true,'map details found successfully',data,res,200)
+
+    }catch(err){
+        return Helper.response(false,err.message,{},res,200)
     }
 }

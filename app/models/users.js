@@ -18,11 +18,11 @@ const users = sequelize.define('user', {
                 args: [2, 50],
                 msg: 'Name must be between 2 and 50 characters',
             },
-            isProperName(value) {
-                if (!/^[A-Z][a-z]+(?: [A-Z][a-z]+)*$/.test(value)) {
-                    throw new Error('Name must start with capital letters (e.g., John Doe)');
-                }
-            }
+            // isProperName(value) {
+            //     if (!/^[A-Z][a-z]+(?: [A-Z][a-z]+)*$/.test(value)) {
+            //         throw new Error('Name must start with capital letters (e.g., John Doe)');
+            //     }
+            // }
         }
     },
     mobile: {
@@ -106,7 +106,16 @@ const users = sequelize.define('user', {
     role:{
         type: DataTypes.ENUM('admin', 'user','doctor'),
         defaultValue: 'user'
-    }
+    },
+
+    isPrime:{
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    deviceToken :{
+        type: DataTypes.STRING(500),
+        allowNull: true,
+    },
 })
 
 // users.sync({alter:true})

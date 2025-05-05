@@ -10,9 +10,9 @@ exports.profile = async (req,res) => {
             where:{
                 id:req.users.id
             },
-            attributes: ['id','name', 'mobile', 'date_of_birth','gender','pin_code','role'],
+            attributes: ['id','name', 'mobile', 'date_of_birth','gender','pin_code','role','email','isPrime'],
         })
-        return Helper.response(true, null, userData.toJSON(), res, 200);
+        return Helper.response(true,"User profile find successfully", userData.toJSON(), res, 200);
     } catch (error) {
         return Helper.response(false, null, error, res, 200);
     }

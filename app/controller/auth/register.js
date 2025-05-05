@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 exports.sendOTP = async (req, res) => {
 
     try {
-        const { mobile } = req.body
+        const { mobile,token } = req.body
         if (!mobile) {
             return Helper.response(
                 false,
@@ -17,14 +17,24 @@ exports.sendOTP = async (req, res) => {
                 200
             );
         }
+        const usersInfo = await users.findOne({
+            where: {
+                mobile: mobile
+            }
+        })
+        if(usersInfo){
+            await users.update({deviceToken:token},{where:{id:usersInfo.id}})
+        }
 
         otp_data = new otp_s()
 
         otp_data.mobile = mobile
+        otp_data.deviceToken = token
         otp_data.otp = Math.floor(100000 + Math.random() * 900000)
         otp_data.status = 'pending'
         otp_data.expireAt = new Date(new Date().getTime() + 5 * 60000)
         otp_data.save()
+
         return Helper.response(true, "OTP sent successfully", { otp: otp_data.otp }, res, 200);
     } catch (error) {
         return Helper.response(
@@ -39,7 +49,7 @@ exports.sendOTP = async (req, res) => {
 
 exports.verify = async (req, res) => {
     try {
-        const { mobile, otp } = req.body
+        const { mobile, otp} = req.body
         let is_register = false
         let UpdatedData = []
         if (!mobile || !otp) {
@@ -160,10 +170,54 @@ exports.register = async (req, res) => {
 
 }
 
+exports.updateUser = async(req,res)=>{
+    try{
+        const updateData = {
+            name: req.body.name,
+            mobile: req.body.mobile,
+            pin_code: req.body.pin_code,
+            gender: req.body.gender,
+            date_of_birth: req.body.date_of_birth,
+            email: req.body.email,
+        }
+        const user = await users.findByPk(req.users.id)
+        if(!user){
+            return Helper.response(
+                false,
+                "User not found",
+                [],
+                res,
+                200
+            );
+        }
+        await user.update(updateData,{
+            where: { id: req.users.id }
+        })
+        return Helper.response(
+            true,
+            "User updated successfully",
+            user,
+            res,
+            200
+        );
+
+    }catch(error){
+        return Helper.response(
+            false,
+            error.errors[0]?.message,
+            [],
+            res,
+            200
+        );
+    }
+}
+
+
+
 exports.getRecord = async (req, res) => {
     const axios = require('axios');
     let data = JSON.stringify({
-        "HospitalId": "CH03",
+        "HospitalId": "CH01",
     });
 
     let config = {
@@ -177,6 +231,8 @@ exports.getRecord = async (req, res) => {
         data: data
     };
 
+    
+
 
     axios.request(config)
         .then((response) => {
@@ -187,7 +243,8 @@ exports.getRecord = async (req, res) => {
                     degree: element.Degree,
                     designation: element.Designation,
                     dept_name: element.dept_name,
-                    doctor_img: element.ImageUrl
+                    doctor_img: element.ImageUrl,
+                    fees:element.offlineDoctorFee
                 }
                 await doctors.create(data)
             });
@@ -197,3 +254,35 @@ exports.getRecord = async (req, res) => {
         });
 
 }
+
+exports.doctorDetails = async(req,res)=>{
+  try{
+    const axios = require('axios');
+    let data = req.body
+
+    let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://exprohelp.com/ChandanMobileWebApiNew/api/Hospital/DoctorProfileDetail',
+     headers: { 
+    'Content-Type': 'application/json', 
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM4YTMwM2E5LWU4ZjMtNDE1NS1hYWJlLTYzOGIyN2U5MDA1ZCIsInJvbGUiOiJjYW1wIiwiaWF0IjoxNzQ0MzQ4NTM1LCJleHAiOjE3NDQ5NTMzMzV9.SdXvKHKIumXKApXTosPMBeXE1w5BhQ0PrwXy_AqPL_0'
+    },
+    data : data
+    };
+
+    axios.request(config)
+    .then((response) => {
+        return Helper.response(true, "Doctor details found successfully!",response.data.dataSet.Table1, res, 200);
+  
+    })
+    .catch((error) => {
+    console.log(error);
+    });
+
+
+  }catch(err){
+    return Helper.response(false, err.message, {}, res, 200);
+  }
+}
+
